@@ -3,7 +3,6 @@ Product
 * */ const mongoose = require("mongoose");
 const _omitBy = require("lodash/omitBy");
 const { isNullorUndefined } = require("../utils/helpers");
-const { currenciesSupported } = require("../utils/constants");
 
 const productSchemaFields = {
   name: {
@@ -20,10 +19,6 @@ const productSchemaFields = {
   sellingPrice: {
     type: Number,
     required: true,
-  },
-  currency: {
-    type: String,
-    enum: currenciesSupported,
   },
   noOfUnits: {
     type: Number,
