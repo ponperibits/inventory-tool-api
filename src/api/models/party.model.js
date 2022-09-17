@@ -49,15 +49,31 @@ const allFields = Object.keys(partySchemaFields).join(" ");
 partySchema.method({});
 
 partySchema.statics = {
-  async list({ page = 1, perPage = 100, date, fields = allFields, ...rest }) {
-    const options = _omitBy(rest, (each) => isNullorUndefined(each));
+  async list({
+    page = 1,
+    perPage = 100,
+    date,
+    fields = allFields,
+    searchText,
+    ...rest
+  }) {
+    let options = _omitBy(rest, (each) => isNullorUndefined(each));
 
     if (date && date != "null") {
       options["dateTime"] = { $gte: date };
     }
+
+    if (!isNullorUndefined(searchText) && searchText != "") {
+      options = {
+        ...options,
+        $or: [{ name: { $regex: searchText, $options: "i" } }],
+      };
+    }
+
     if (fields && fields != "null") {
       fields = fields.replace(/,/g, " ");
     }
+
     return this.find(options, fields)
       .sort({ createdAt: 1 })
       .skip(perPage * (page - 1))

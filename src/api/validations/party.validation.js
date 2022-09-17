@@ -28,6 +28,7 @@ module.exports = {
       date: Joi.alternatives([Joi.date(), Joi.string().valid("null")]),
       fields: Joi.string(),
       type: Joi.string(),
+      searchText: Joi.string().allow(""),
     }),
   },
 
