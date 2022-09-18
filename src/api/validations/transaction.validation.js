@@ -12,8 +12,10 @@ module.exports = {
     body: Joi.object({
       transactionDate: Joi.number().required(),
       amount: Joi.number().required(),
-      currency: Joi.string().allow(""),
       records: Joi.array(),
+      notes: Joi.string().allow(""),
+      supplierId: Joi.string().allow(""),
+      customerId: Joi.string().allow(""),
     }),
   },
 
@@ -42,8 +44,10 @@ module.exports = {
     body: Joi.object({
       transactionDate: Joi.number().allow(""),
       amount: Joi.number().allow(""),
-      currency: Joi.string().allow(""),
       records: Joi.array(),
+      notes: Joi.string().allow(""),
+      supplierId: Joi.string().allow(""),
+      customerId: Joi.string().allow(""),
     }),
   },
 

@@ -3,15 +3,11 @@ Record
 * */ const mongoose = require("mongoose");
 const _omitBy = require("lodash/omitBy");
 const { isNullorUndefined } = require("../utils/helpers");
-const { currenciesSupported } = require("../utils/constants");
 
 const recordSchemaFields = {
   transactionDate: {
     type: Number,
     required: true,
-  },
-  notes: {
-    type: String,
   },
   productId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -25,10 +21,6 @@ const recordSchemaFields = {
   amount: {
     type: Number,
     required: true,
-  },
-  currency: {
-    type: String,
-    enum: currenciesSupported,
   },
   prodUnitsBalance: {
     type: Number,
@@ -46,7 +38,7 @@ const recordSchemaFields = {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Party",
   },
-  UserId: {
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },

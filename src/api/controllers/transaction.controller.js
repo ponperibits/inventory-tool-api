@@ -49,6 +49,13 @@ exports.create = async (req, res, next) => {
         ...record,
         userId: req.user._id,
         transactionId: savedTransaction._id,
+        transactionDate: savedTransaction.transactionDate,
+        ...(savedTransaction.supplierId && {
+          supplierId: savedTransaction.supplierId,
+        }),
+        ...(savedTransaction.customerId && {
+          customerId: savedTransaction.customerId,
+        }),
       });
       recordsToSave.push(newRecord);
     }
@@ -80,12 +87,21 @@ exports.updateOne = async (req, res, next) => {
 
     await Record.deleteMany({ transactionId });
 
+    const updatedTransaction = await Transaction.fetch(transactionId);
+
     let recordsToSave = [];
     for (const record of records) {
       const newRecord = new Record({
         ...record,
         userId: req.user._id,
-        transactionId: transactionId,
+        transactionId,
+        transactionDate: updatedTransaction.transactionDate,
+        ...(updatedTransaction.supplierId && {
+          supplierId: updatedTransaction.supplierId,
+        }),
+        ...(updatedTransaction.customerId && {
+          customerId: updatedTransaction.customerId,
+        }),
       });
       recordsToSave.push(newRecord);
     }

@@ -6,7 +6,6 @@ const mongoose = require("mongoose");
 const mongoosePaginate = require("mongoose-paginate-v2");
 const _omitBy = require("lodash/omitBy");
 const { isNullorUndefined } = require("../utils/helpers");
-const { currenciesSupported } = require("../utils/constants");
 
 const transactionSchemaFields = {
   transactionDate: {
@@ -17,9 +16,20 @@ const transactionSchemaFields = {
     type: Number,
     required: true,
   },
-  currency: {
+  notes: {
     type: String,
-    enum: currenciesSupported,
+  },
+  supplierId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Party",
+  },
+  customerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Party",
+  },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
   },
   createdAt: {
     type: Number,
