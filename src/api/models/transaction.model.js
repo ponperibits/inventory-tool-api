@@ -74,7 +74,16 @@ transactionSchema.statics = {
   },
 
   async fetch(_id) {
-    const transaction = await this.findOne({ _id }).exec();
+    const transaction = await this.findOne({ _id })
+      .populate("supplierId")
+      .populate("customerId")
+      .populate({
+        path: "records",
+        populate: {
+          path: "productId",
+        },
+      })
+      .exec();
     return transaction;
   },
 

@@ -14,8 +14,14 @@ module.exports = {
       amount: Joi.number().required(),
       records: Joi.array(),
       notes: Joi.string().allow(""),
-      supplierId: Joi.string().allow(""),
-      customerId: Joi.string().allow(""),
+      supplierId: Joi.alternatives([
+        Joi.string().allow(""),
+        Joi.object().allow({}),
+      ]),
+      customerId: Joi.alternatives([
+        Joi.string().allow(""),
+        Joi.object().allow({}),
+      ]),
     }),
   },
 
@@ -46,8 +52,14 @@ module.exports = {
       amount: Joi.number().allow(""),
       records: Joi.array(),
       notes: Joi.string().allow(""),
-      supplierId: Joi.string().allow(""),
-      customerId: Joi.string().allow(""),
+      supplierId: Joi.alternatives([
+        Joi.string().allow(""),
+        Joi.object().allow({}),
+      ]),
+      customerId: Joi.alternatives([
+        Joi.string().allow(""),
+        Joi.object().allow({}),
+      ]),
     }),
   },
 

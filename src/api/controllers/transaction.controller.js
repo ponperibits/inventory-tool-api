@@ -4,6 +4,7 @@ Transaction
 const httpStatus = require("http-status");
 const Transaction = require("../models/transaction.model");
 const Record = require("../models/record.model");
+const Product = require("../models/product.model");
 const _omitBy = require("lodash/omitBy");
 const { isNullorUndefined } = require("../utils/helpers");
 
@@ -60,6 +61,7 @@ exports.create = async (req, res, next) => {
       recordsToSave.push(newRecord);
     }
 
+    await adjustProductQuantity(recordsToSave);
     await Record.insertMany(recordsToSave);
 
     res.status(httpStatus.CREATED);
@@ -85,6 +87,8 @@ exports.updateOne = async (req, res, next) => {
     const { records, ...rest } = req.body;
     await Transaction.updateTransaction(transactionId, rest);
 
+    const existingRecords = await Record.find({ transactionId });
+    await adjustProductQuantity(existingRecords, -1);
     await Record.deleteMany({ transactionId });
 
     const updatedTransaction = await Transaction.fetch(transactionId);
@@ -105,6 +109,7 @@ exports.updateOne = async (req, res, next) => {
       });
       recordsToSave.push(newRecord);
     }
+    await adjustProductQuantity(recordsToSave);
     await Record.insertMany(recordsToSave);
 
     res.status(httpStatus.NO_CONTENT);
@@ -122,5 +127,21 @@ exports.removeOne = async (req, res, next) => {
     res.send();
   } catch (error) {
     next(error);
+  }
+};
+
+const adjustProductQuantity = async (records, multiplier = 1) => {
+  for (const record of records) {
+    const { productId, noOfUnits, supplierId } = record;
+    await Product.updateOne(
+      { _id: productId },
+      {
+        $inc: {
+          noOfUnits: supplierId
+            ? multiplier * noOfUnits
+            : multiplier * -noOfUnits,
+        },
+      }
+    );
   }
 };
