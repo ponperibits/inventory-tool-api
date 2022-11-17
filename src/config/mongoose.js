@@ -1,10 +1,11 @@
 const mongoose = require("mongoose");
+const logger = require("./../config/logger");
 const { env, mongo } = require("./variables");
 
 mongoose.Promise = Promise;
 
 mongoose.connection.on("error", (error) => {
-  console.error(`MongoDB connection error: ${error}`);
+  logger.error(`MongoDB connection error: ${error}`);
   process.exit(-1);
 });
 
