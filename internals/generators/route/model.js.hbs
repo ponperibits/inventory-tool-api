@@ -1,0 +1,30 @@
+/** * *
+{{properCase name}}
+* */ const mongoose = require('mongoose');
+{{#if wantCrud}}
+  const _omitBy = require('lodash/omitBy'); const { isNullorUndefined } =
+  require('../utils/helpers'); const allFields = '/* add all the collection
+  fields here */';
+{{/if}}
+
+const
+{{camelCase name}}Schema = new mongoose.Schema({ // add collection schema }, {
+timestamps: true, });
+
+{{camelCase name}}Schema.method({ });
+
+{{camelCase name}}Schema.statics = {
+{{#if wantCrud}}
+  async list({ page = 1, perPage = 100, date, fields = allFields }) { const
+  options = {}; if(date && date != 'null') { options['dateTime'] = { $gte: date
+  } } if(fields && fields != 'null') { fields = fields.replace(/,/g, ' '); }
+  return this.find(options, fields) .sort({ createdAt: 1 }) .skip(perPage *
+  (page - 1)) .limit(perPage) .exec(); }, async fetch(_id) { const
+  {{camelCase name}}
+  = await this.findOne({ _id }) .exec(); return
+  {{camelCase name}}; }, async update{{name}}(id, updates) { updates =
+  _omitBy(updates, (each) => isNullorUndefined(each)); await this.updateOne({
+  _id: id }, updates).exec(); }
+{{/if}}
+} module.exports = mongoose.model('{{properCase name}}',
+{{camelCase name}}Schema);

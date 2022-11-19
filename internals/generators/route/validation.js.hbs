@@ -1,0 +1,52 @@
+/**
+*
+* {{ properCase name }}
+*
+*/
+
+const Joi = require('joi');
+
+module.exports = {
+  {{#if wantCrud}}
+  // POST v1/{{ camelCase name }}
+  create{{ properCase name }}: {
+    body: Joi.object({
+      // add collection fields here
+    })
+  },
+
+  // GET /v1/{{ camelCase name }}
+  list{{ properCase name }}: {
+    query: Joi.object({
+      page: Joi.number().min(1),
+      perPage: Joi.number().min(1).max(100),
+      date: Joi.alternatives([Joi.date(), Joi.string().valid('null')]),
+      fields: Joi.string(),
+    })
+  },
+
+  // GET /v1/{{ camelCase name }}/:{{ camelCase name }}Id
+  fetch{{ properCase name }}: {
+    params: {
+      {{ camelCase name }}Id: Joi.string().required()
+    }
+  },
+
+  // PATCH /v1/{{ camelCase name }}/:{{ camelCase name }}Id
+  update{{ properCase name }}: {
+    params: {
+      {{ camelCase name }}Id: Joi.string().required()
+    },
+    body: {
+      // add collection fields here
+    }
+  },
+
+  // DELETE /v1/{{ camelCase name }}/:{{ camelCase name }}
+  delete{{ properCase name }}: {
+    params: {
+      {{ camelCase name }}Id: Joi.string().required()
+    }
+  }
+  {{/if}}
+};

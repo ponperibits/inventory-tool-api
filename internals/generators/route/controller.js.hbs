@@ -1,0 +1,35 @@
+/** * *
+{{properCase name}}
+* */ const httpStatus = require('http-status'); const
+{{name}}
+= require('../models/{{camelCase name}}.model');
+
+{{#if wantCrud}}
+  exports.list = async (req, res, next) => { try { const
+  {{camelCase name}}s = await
+  {{name}}.list(req.query); res.json({{camelCase name}}s); } catch (error) {
+  next(error); } } exports.create = async (req, res, next) => { try { const
+  {{camelCase name}}
+  = new
+  {{name}}({ ...req.body, }); const saved{{name}}
+  = await
+  {{camelCase name}}.save(); res.status(httpStatus.CREATED); res.json(saved{{name}});
+  } catch (error) { next(error); } } exports.fetch = async (req, res, next) => {
+  try { const {
+  {{camelCase name}}Id } = req.params; const
+  {{camelCase name}}
+  = await
+  {{name}}.fetch({{camelCase name}}Id); res.json({{camelCase name}}); } catch
+  (error) { next(error); } } exports.updateOne = async (req, res, next) => { try
+  { const {
+  {{camelCase name}}Id } = req.params; await
+  {{name}}.update{{properCase name}}({{camelCase name}}Id, req.body);
+  res.status(httpStatus.NO_CONTENT); res.send(); } catch(error) { next(error); }
+  } exports.removeOne = async (req, res, next) => { try { const {
+  {{camelCase name}}Id: _id } = req.params; await
+  {{name}}.deleteOne({ _id }); res.status(httpStatus.NO_CONTENT); res.send(); }
+  catch(error) { next(error); } }
+{{else}}
+  exports.fetch = async (req, res, next) => { try{ } catch(error) { next(error);
+  } }
+{{/if}}

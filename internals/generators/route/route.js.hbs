@@ -1,0 +1,101 @@
+/** * *
+{{properCase name}}
+* */ const express = require('express'); const validate =
+require('express-validation'); const controller = require('../../controllers/{{camelCase
+  name
+}}.controller'); const { authorize, LOGGED_USER, ADMIN, RECRUITER } =
+require('../../middlewares/auth'); const {
+{{#if wantCrud}}
+  list{{properCase name}}, create{{properCase name}}, fetch{{properCase name}},
+  update{{properCase name}}, delete{{properCase name}},
+{{/if}}
+} = require('../../validations/{{camelCase name}}.validation'); const router =
+express.Router();
+
+{{#if wantCrud}}
+  router.route('/all') /** * @api {GET} v1/{{camelCase name}}/all List
+  {{camelCase name}}
+  * @apiDescription Get a list of
+  {{camelCase name}}
+  * @apiVersion 1.0.0 * @apiName List{{camelCase name}}
+  * @apiGroup
+  {{camelCase name}}
+  * @apiPermission logged user * * @apiHeader {String} Authorization User's
+  access token * * @apiParam {Number{1-}} [page=1] List page * @apiParam
+  {Number{1-100}} [perPage=1]
+  {{camelCase name}}s per page * @apiParam {String} [fields=id title] Fields to
+  be fetched * * @apiSuccess {Object[]} List of
+  {{camelCase name}}s. * * @apiError (Unauthorized 401) Unauthorized Only
+  authenticated users can access the data * @apiError (Forbidden 403) Forbidden
+  Only admins can access the data */ .get(authorize(LOGGED_USER), validate(list{{properCase
+    name
+  }}), controller.list); router.route('') /** * @api {POST} v1/{{camelCase
+    name
+  }}
+  Create
+  {{camelCase name}}
+  * @apiDescription Create an
+  {{camelCase name}}
+  * @apiVersion 1.0.0 * @apiName Create{{camelCase name}}
+  * @apiGroup
+  {{camelCase name}}
+  * @apiPermission admin * * @apiHeader {String} Authorization User's access
+  token * * Add body params here * * @apiSuccess (Created 201) * * @apiError
+  (Unauthorized 401) Unauthorized Only authenticated users can access the data *
+  @apiError (Forbidden 403) Forbidden Only admins can access the data */
+  .post(authorize(LOGGED_USER), validate(create{{properCase name}}),
+  controller.create); router.route('/:{{camelCase name}}Id') /** * @api {GET}
+  v1/{{camelCase name}}/:{{camelCase name}}Id Get
+  {{camelCase name}}
+  Details * @apiDescription Get a
+  {{camelCase name}}
+  Details * @apiVersion 1.0.0 * @apiName Fetch{{camelCase name}}
+  * @apiGroup
+  {{camelCase name}}
+  * @apiPermission Logged User * * @apiHeader {String} Authorization User's
+  access token * * @apiParam {String}
+  {{camelCase name}}Id
+  {{camelCase name}}'s Id * * * @apiError (Unauthorized 401) Unauthorized Only
+  authenticated users can access the data * @apiError (Forbidden 403) Forbidden
+  Only admins can access the data */ .get(authorize(LOGGED_USER), validate(fetch{{properCase
+    name
+  }}), controller.fetch) /** * @api {PATCH} v1/{{camelCase name}}/:{{camelCase
+    name
+  }}Id Update
+  {{camelCase name}}
+  * @apiDescription Update an
+  {{camelCase name}}
+  * @apiVersion 1.0.0 * @apiName Update{{camelCase name}}
+  * @apiGroup
+  {{camelCase name}}
+  * @apiPermission admin * * @apiHeader {String} Authorization User's access
+  token * * @apiParam {String}
+  {{camelCase name}}Id
+  {{camelCase name}}'s Id * * * @apiSuccess (No Content 204)
+  {{camelCase name}}
+  updated * * @apiError (Unauthorized 401) Unauthorized Only authenticated users
+  can access the data * @apiError (Forbidden 403) Forbidden Only admins can
+  access the data */ .patch(authorize(LOGGED_USER), validate(update{{properCase
+    name
+  }}), controller.updateOne) /** * @api {DELETE} v1/{{camelCase
+    name
+  }}/:{{camelCase name}}Id
+  {{camelCase name}}
+  event * @apiDescription DELETE a
+  {{camelCase name}}
+  * @apiVersion 1.0.0 * @apiName Delete{{camelCase name}}
+  * @apiGroup
+  {{camelCase name}}
+  * @apiPermission Admin * * @apiHeader {String} Authorization User's access
+  token * * @apiParam {String}
+  {{camelCase name}}Id
+  {{camelCase name}}'s Id * * @apiSuccess (No Content 204)
+  {{camelCase name}}
+  deleted * * @apiError (Unauthorized 401) Unauthorized Only authenticated users
+  can access the data * @apiError (Forbidden 403) Forbidden Only admins can
+  access the data */ .delete(authorize(LOGGED_USER), validate(delete{{properCase
+    name
+  }}), controller.removeOne);
+{{/if}}
+
+module.exports = router;
