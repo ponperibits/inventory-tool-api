@@ -41,7 +41,7 @@ exports.sendEmailVerification = async (verificationObj) => {
     .send({
       template: "emailVerification",
       message: {
-        to: verificationObj.userEmail,
+        to: verificationObj.email,
       },
       locals: {
         productName: "Inventory Tool",

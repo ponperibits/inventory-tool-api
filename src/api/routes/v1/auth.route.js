@@ -1,6 +1,9 @@
 const express = require("express");
 const { validate } = require("express-validation");
-const { register } = require("../../validations/auth.validation");
+const {
+  register,
+  emailVerification,
+} = require("../../validations/auth.validation");
 const controller = require("../../controllers/auth.controller");
 
 const router = express.Router();
@@ -22,4 +25,7 @@ const router = express.Router();
  */
 router.route("/register").post(validate(register), controller.register);
 
+router
+  .route("/verify-code")
+  .post(validate(emailVerification), controller.emailVerification);
 module.exports = router;

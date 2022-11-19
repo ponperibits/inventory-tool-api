@@ -12,7 +12,7 @@ const emailVerificationSchema = new mongoose.Schema({
     required: true,
     index: true,
   },
-  userEmail: {
+  email: {
     type: String,
     required: true,
   },
@@ -52,12 +52,12 @@ emailVerificationSchema.method({
 emailVerificationSchema.statics = {
   async generate(user) {
     try {
-      const { email: userEmail, password, name, orgName, phone } = user;
+      const { email, password, name, orgName, phone } = user;
       const code = `${generateRandom()}`;
       const expires = moment().add(config.codeExpiry, "m").toDate();
       const verifyObj = new EmailVerification({
         code,
-        userEmail,
+        email,
         expires,
         password,
         name,

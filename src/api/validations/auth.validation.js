@@ -11,4 +11,12 @@ module.exports = {
       phone: Joi.string().required(),
     }),
   },
+
+  // POST /v1/auth/verify-code
+  emailVerification: {
+    body: Joi.object({
+      email: Joi.string().email().required(),
+      code: Joi.string().length(6),
+    }),
+  },
 };
