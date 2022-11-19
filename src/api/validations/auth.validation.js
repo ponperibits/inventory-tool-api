@@ -12,6 +12,22 @@ module.exports = {
     }),
   },
 
+  // POST /v1/auth/login
+  login: {
+    body: Joi.object({
+      email: Joi.string().email().required(),
+      password: Joi.string().required().max(128),
+    }),
+  },
+
+  // POST /v1/auth/refresh
+  refresh: {
+    body: Joi.object({
+      email: Joi.string().email().required(),
+      refreshToken: Joi.string().required(),
+    }),
+  },
+
   // POST /v1/auth/verify-code
   emailVerification: {
     body: Joi.object({

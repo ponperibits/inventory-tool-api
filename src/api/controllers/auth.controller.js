@@ -32,6 +32,17 @@ exports.register = async (req, res, next) => {
   }
 };
 
+exports.login = async (req, res, next) => {
+  try {
+    const { user, accessToken } = await User.findAndGenerateToken(req.body);
+    const token = generateTokenResponse(user, accessToken);
+    const userTransformed = user.transform();
+    return res.json({ token, user: userTransformed });
+  } catch (error) {
+    return next(error);
+  }
+};
+
 async function sendEmailVerification(user) {
   if (user) {
     const verificationObj = await EmailVerification.findOne({
@@ -112,6 +123,24 @@ exports.emailVerification = async (req, res, next) => {
     return res.json(response);
   } catch (err) {
     return next(err);
+  }
+};
+
+exports.refresh = async (req, res, next) => {
+  try {
+    const { email, refreshToken } = req.body;
+    const refreshObject = await RefreshToken.findOneAndRemove({
+      email,
+      token: refreshToken,
+    });
+    const { user, accessToken } = await User.findAndGenerateToken({
+      email,
+      refreshObject,
+    });
+    const response = generateTokenResponse(user, accessToken);
+    return res.json(response);
+  } catch (error) {
+    return next(error);
   }
 };
 

@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const httpStatus = require("http-status");
 const bcrypt = require("bcryptjs");
 const moment = require("moment-timezone");
 const jwt = require("jwt-simple");
@@ -144,7 +145,7 @@ userSchema.statics = {
         return { user, accessToken: user.token() };
       }
       err.message = "Incorrect email or password";
-    } else if (refreshObject && refreshObject.userEmail === email) {
+    } else if (refreshObject && refreshObject.email === email) {
       if (moment(refreshObject.expires).isBefore()) {
         err.message = "Invalid refresh token.";
       } else {
