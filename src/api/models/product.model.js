@@ -1,33 +1,38 @@
 /** * *
-Party
+Product
 * */ const mongoose = require("mongoose");
 const _omitBy = require("lodash/omitBy");
 const { isNullorUndefined } = require("../utils/helpers");
+const { currenciesSupported } = require("../utils/constants");
 
-const partySchemaFields = {
+const productSchemaFields = {
   name: {
     type: String,
     required: true,
   },
-  phone: {
+  description: {
     type: String,
   },
-  type: {
-    type: String,
-    enum: ["Customer", "Supplier"],
+  price: {
+    type: Number,
     required: true,
   },
-  gstNumber: {
-    type: String,
+  sellingPrice: {
+    type: Number,
+    required: true,
   },
-  panNumber: {
+  currency: {
     type: String,
+    enum: currenciesSupported,
   },
-  category: {
-    type: String,
+  noOfUnits: {
+    type: Number,
+    default: 0,
   },
-  address: {
-    type: String,
+  supplierId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Party",
+    required: true,
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -40,21 +45,23 @@ const partySchemaFields = {
     type: Number,
   },
 };
-const partySchema = new mongoose.Schema(partySchemaFields, {
-  timestamps: { currentTime: () => Date.now() },
+
+const productSchema = new mongoose.Schema(productSchemaFields, {
+  timestamps: true,
 });
 
-const allFields = Object.keys(partySchemaFields).join(" ");
+const allFields = Object.keys(productSchemaFields).join(" ");
 
-partySchema.method({});
+productSchema.method({});
 
-partySchema.statics = {
+productSchema.statics = {
   async list({ page = 1, perPage = 100, date, fields = allFields, ...rest }) {
     const options = _omitBy(rest, (each) => isNullorUndefined(each));
 
     if (date && date != "null") {
       options["dateTime"] = { $gte: date };
     }
+
     if (fields && fields != "null") {
       fields = fields.replace(/,/g, " ");
     }
@@ -66,11 +73,11 @@ partySchema.statics = {
   },
 
   async fetch(_id) {
-    const party = await this.findOne({ _id }).exec();
-    return party;
+    const product = await this.findOne({ _id }).exec();
+    return product;
   },
 
-  async updateParty(id, updates) {
+  async updateProduct(id, updates) {
     updates = _omitBy(updates, (each) => isNullorUndefined(each));
     await this.updateOne(
       {
@@ -81,4 +88,4 @@ partySchema.statics = {
   },
 };
 
-module.exports = mongoose.model("Party", partySchema);
+module.exports = mongoose.model("Product", productSchema);

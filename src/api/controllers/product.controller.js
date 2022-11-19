@@ -1,13 +1,16 @@
+/** * *
+Product
+* */
 const httpStatus = require("http-status");
-const Party = require("../models/party.model");
+const Product = require("../models/product.model");
 
 exports.list = async (req, res, next) => {
   try {
-    const parties = await Party.list({
+    const products = await Product.list({
       ...req.query,
       userId: req.user._id,
     });
-    res.json(parties);
+    res.json(products);
   } catch (error) {
     next(error);
   }
@@ -15,13 +18,13 @@ exports.list = async (req, res, next) => {
 
 exports.create = async (req, res, next) => {
   try {
-    const party = new Party({
+    const product = new Product({
       ...req.body,
       userId: req.user._id,
     });
-    const savedParty = await party.save();
+    const savedProduct = await product.save();
     res.status(httpStatus.CREATED);
-    res.json(savedParty);
+    res.json(savedProduct);
   } catch (error) {
     next(error);
   }
@@ -29,9 +32,9 @@ exports.create = async (req, res, next) => {
 
 exports.fetch = async (req, res, next) => {
   try {
-    const { partyId } = req.params;
-    const party = await Party.fetch(partyId);
-    res.json(party);
+    const { productId } = req.params;
+    const product = await Product.fetch(productId);
+    res.json(product);
   } catch (error) {
     next(error);
   }
@@ -39,8 +42,8 @@ exports.fetch = async (req, res, next) => {
 
 exports.updateOne = async (req, res, next) => {
   try {
-    const { partyId } = req.params;
-    await Party.updateParty(partyId, req.body);
+    const { productId } = req.params;
+    await Product.updateProduct(productId, req.body);
     res.status(httpStatus.NO_CONTENT);
     res.send();
   } catch (error) {
@@ -50,8 +53,8 @@ exports.updateOne = async (req, res, next) => {
 
 exports.removeOne = async (req, res, next) => {
   try {
-    const { partyId: _id } = req.params;
-    await Party.deleteOne({ _id });
+    const { productId: _id } = req.params;
+    await Product.deleteOne({ _id });
     res.status(httpStatus.NO_CONTENT);
     res.send();
   } catch (error) {
