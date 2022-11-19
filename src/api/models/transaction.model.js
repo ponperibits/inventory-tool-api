@@ -1,42 +1,22 @@
 /** * *
-Product
+Transaction
 * */ const mongoose = require("mongoose");
 const _omitBy = require("lodash/omitBy");
 const { isNullorUndefined } = require("../utils/helpers");
 const { currenciesSupported } = require("../utils/constants");
 
-const productSchemaFields = {
-  name: {
-    type: String,
-    required: true,
-  },
-  description: {
-    type: String,
-  },
-  price: {
+const transactionSchemaFields = {
+  transactionDate: {
     type: Number,
-    required: true,
+    require: true,
   },
-  sellingPrice: {
+  amount: {
     type: Number,
     required: true,
   },
   currency: {
     type: String,
     enum: currenciesSupported,
-  },
-  noOfUnits: {
-    type: Number,
-    default: 0,
-  },
-  supplierId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Party",
-    required: true,
-  },
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
   },
   createdAt: {
     type: Number,
@@ -46,15 +26,15 @@ const productSchemaFields = {
   },
 };
 
-const productSchema = new mongoose.Schema(productSchemaFields, {
+const transactionSchema = new mongoose.Schema(transactionSchemaFields, {
   timestamps: { currentTime: () => Date.now() },
 });
 
-const allFields = Object.keys(productSchemaFields).join(" ");
+const allFields = Object.keys(transactionSchemaFields).join(" ");
 
-productSchema.method({});
+transactionSchema.method({});
 
-productSchema.statics = {
+transactionSchema.statics = {
   async list({ page = 1, perPage = 100, date, fields = allFields, ...rest }) {
     const options = _omitBy(rest, (each) => isNullorUndefined(each));
 
@@ -73,11 +53,11 @@ productSchema.statics = {
   },
 
   async fetch(_id) {
-    const product = await this.findOne({ _id }).exec();
-    return product;
+    const transaction = await this.findOne({ _id }).exec();
+    return transaction;
   },
 
-  async updateProduct(id, updates) {
+  async updateTransaction(id, updates) {
     updates = _omitBy(updates, (each) => isNullorUndefined(each));
     await this.updateOne(
       {
@@ -88,4 +68,4 @@ productSchema.statics = {
   },
 };
 
-module.exports = mongoose.model("Product", productSchema);
+module.exports = mongoose.model("Transaction", transactionSchema);
