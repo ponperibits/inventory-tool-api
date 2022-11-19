@@ -54,6 +54,25 @@ async function sendEmailVerification(user) {
   });
 }
 
+exports.resendEmailVerification = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const user = await EmailVerification.findOne({ email }).exec();
+    if (!user) {
+      const err = {
+        status: httpStatus.BAD_REQUEST,
+        message: "Email id not registered. Please register again",
+      };
+      throw new APIError(err);
+    }
+    const updatedObj = user.resetCode();
+    emailProvider.sendEmailVerification(updatedObj);
+    return res.json("Email resent");
+  } catch (error) {
+    return next(error);
+  }
+};
+
 exports.emailVerification = async (req, res, next) => {
   try {
     const { email: userEmail, code } = req.body;

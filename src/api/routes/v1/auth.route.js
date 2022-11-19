@@ -3,6 +3,7 @@ const { validate } = require("express-validation");
 const {
   register,
   emailVerification,
+  resendVerification,
 } = require("../../validations/auth.validation");
 const controller = require("../../controllers/auth.controller");
 
@@ -28,4 +29,7 @@ router.route("/register").post(validate(register), controller.register);
 router
   .route("/verify-code")
   .post(validate(emailVerification), controller.emailVerification);
+router
+  .route("/resend-verification")
+  .post(validate(resendVerification), controller.resendEmailVerification);
 module.exports = router;

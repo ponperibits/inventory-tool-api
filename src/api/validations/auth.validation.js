@@ -19,4 +19,11 @@ module.exports = {
       code: Joi.string().length(6),
     }),
   },
+
+  // POST /v1/auth/resend-verification
+  resendVerification: {
+    body: Joi.object({
+      email: Joi.string().email().required(),
+    }),
+  },
 };
