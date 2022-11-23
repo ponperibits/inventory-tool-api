@@ -8,7 +8,6 @@ module.exports = {
       password: Joi.string().required().min(6).max(128),
       name: Joi.string().required(),
       orgName: Joi.string().required(),
-      phone: Joi.string().required(),
     }),
   },
 
