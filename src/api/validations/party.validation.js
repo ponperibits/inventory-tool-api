@@ -27,6 +27,7 @@ module.exports = {
       perPage: Joi.number().min(1).max(100),
       date: Joi.alternatives([Joi.date(), Joi.string().valid("null")]),
       fields: Joi.string(),
+      type: Joi.string(),
     }),
   },
 
