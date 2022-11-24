@@ -66,6 +66,7 @@ productSchema.statics = {
       fields = fields.replace(/,/g, " ");
     }
     return this.find(options, fields)
+      .populate("supplierId", "name")
       .sort({ createdAt: 1 })
       .skip(perPage * (page - 1))
       .limit(perPage)
@@ -73,7 +74,9 @@ productSchema.statics = {
   },
 
   async fetch(_id) {
-    const product = await this.findOne({ _id }).exec();
+    const product = await this.findOne({ _id })
+      .populate("supplierId", "name")
+      .exec();
     return product;
   },
 
