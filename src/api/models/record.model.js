@@ -81,6 +81,7 @@ recordSchema.statics = {
     return this.find(options, fields)
       .populate("supplierId", "name")
       .populate("customerId", "name")
+      .populate("productId", "name")
       .sort({ transactionDate: -1 })
       .skip(perPage * (page - 1))
       .limit(perPage)
