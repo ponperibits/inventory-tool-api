@@ -1,6 +1,9 @@
 /** * *
 Transaction
-* */ const mongoose = require("mongoose");
+* */
+
+const mongoose = require("mongoose");
+const mongoosePaginate = require("mongoose-paginate-v2");
 const _omitBy = require("lodash/omitBy");
 const { isNullorUndefined } = require("../utils/helpers");
 const { currenciesSupported } = require("../utils/constants");
@@ -28,14 +31,22 @@ const transactionSchemaFields = {
 
 const transactionSchema = new mongoose.Schema(transactionSchemaFields, {
   timestamps: { currentTime: () => Date.now() },
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true },
 });
 
 const allFields = Object.keys(transactionSchemaFields).join(" ");
 
 transactionSchema.method({});
 
+transactionSchema.virtual("records", {
+  ref: "Record",
+  localField: "_id",
+  foreignField: "transactionId",
+});
+
 transactionSchema.statics = {
-  async list({ page = 1, perPage = 100, date, fields = allFields, ...rest }) {
+  async list({ page = 1, perPage = 30, date, fields = allFields, ...rest }) {
     const options = _omitBy(rest, (each) => isNullorUndefined(each));
 
     if (date && date != "null") {
@@ -67,5 +78,7 @@ transactionSchema.statics = {
     ).exec();
   },
 };
+
+transactionSchema.plugin(mongoosePaginate);
 
 module.exports = mongoose.model("Transaction", transactionSchema);

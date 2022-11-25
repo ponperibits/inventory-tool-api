@@ -60,6 +60,8 @@ const recordSchemaFields = {
 
 const recordSchema = new mongoose.Schema(recordSchemaFields, {
   timestamps: { currentTime: () => Date.now() },
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true },
 });
 
 const allFields = Object.keys(recordSchemaFields).join(" ");

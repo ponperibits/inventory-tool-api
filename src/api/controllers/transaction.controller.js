@@ -4,12 +4,29 @@ Transaction
 const httpStatus = require("http-status");
 const Transaction = require("../models/transaction.model");
 const Record = require("../models/record.model");
+const _omitBy = require("lodash/omitBy");
+const { isNullorUndefined } = require("../utils/helpers");
 
 exports.list = async (req, res, next) => {
   try {
-    const transactions = await Transaction.list({
+    const query = {
       ...req.query,
       userId: req.user._id,
+    };
+    const { page, perPage, ...rest } = _omitBy(query, (each) =>
+      isNullorUndefined(each)
+    );
+
+    let transactions = await Transaction.paginate(rest, {
+      page: page || 1,
+      limit: perPage || 2,
+      sort: { createdAt: -1 },
+      populate: {
+        path: "records",
+        populate: {
+          path: "productId supplierId customerId",
+        },
+      },
     });
     res.json(transactions);
   } catch (error) {
