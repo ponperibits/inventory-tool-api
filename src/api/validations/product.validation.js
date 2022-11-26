@@ -15,8 +15,7 @@ module.exports = {
       price: Joi.number().required(),
       sellingPrice: Joi.number().required(),
       currency: Joi.string().allow(""),
-      noOfUnits: Joi.number().allow(0),
-      supplierId: Joi.string().required(),
+      minStockWarning: Joi.number().allow(0),
     }),
   },
 
@@ -27,6 +26,7 @@ module.exports = {
       perPage: Joi.number().min(1).max(100),
       date: Joi.alternatives([Joi.date(), Joi.string().valid("null")]),
       fields: Joi.string(),
+      searchText: Joi.string().allow(""),
     }),
   },
 
@@ -49,7 +49,7 @@ module.exports = {
       sellingPrice: Joi.number().allow(""),
       currency: Joi.string().allow(""),
       noOfUnits: Joi.number().allow(0),
-      supplierId: Joi.string().allow(""),
+      minStockWarning: Joi.number().allow(0),
     }),
   },
 

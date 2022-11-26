@@ -29,10 +29,9 @@ const productSchemaFields = {
     type: Number,
     default: 0,
   },
-  supplierId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Party",
-    required: true,
+  minStockWarning: {
+    type: Number,
+    default: 5,
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -55,18 +54,34 @@ const allFields = Object.keys(productSchemaFields).join(" ");
 productSchema.method({});
 
 productSchema.statics = {
-  async list({ page = 1, perPage = 100, date, fields = allFields, ...rest }) {
-    const options = _omitBy(rest, (each) => isNullorUndefined(each));
+  async list({
+    page = 1,
+    perPage = 100,
+    date,
+    fields = allFields,
+    searchText,
+    ...rest
+  }) {
+    let options = _omitBy(rest, (each) => isNullorUndefined(each));
 
     if (date && date != "null") {
       options["dateTime"] = { $gte: date };
+    }
+
+    if (!isNullorUndefined(searchText) && searchText != "") {
+      options = {
+        ...options,
+        $or: [
+          { name: { $regex: searchText, $options: "i" } },
+          { description: { $regex: searchText, $options: "i" } },
+        ],
+      };
     }
 
     if (fields && fields != "null") {
       fields = fields.replace(/,/g, " ");
     }
     return this.find(options, fields)
-      .populate("supplierId", "name")
       .sort({ createdAt: 1 })
       .skip(perPage * (page - 1))
       .limit(perPage)
@@ -74,9 +89,7 @@ productSchema.statics = {
   },
 
   async fetch(_id) {
-    const product = await this.findOne({ _id })
-      .populate("supplierId", "name")
-      .exec();
+    const product = await this.findOne({ _id }).exec();
     return product;
   },
 
