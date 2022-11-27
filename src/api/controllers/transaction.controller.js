@@ -20,7 +20,7 @@ exports.list = async (req, res, next) => {
 
     let transactions = await Transaction.paginate(rest, {
       page: page || 1,
-      limit: perPage || 2,
+      limit: perPage || 30,
       sort: { createdAt: -1 },
       populate: {
         path: "records",
