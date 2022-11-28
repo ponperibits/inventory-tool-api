@@ -1,6 +1,8 @@
 /** * *
 Party
-* */ const mongoose = require("mongoose");
+* */
+const mongoose = require("mongoose");
+const mongoosePaginate = require("mongoose-paginate-v2");
 const _omitBy = require("lodash/omitBy");
 const { isNullorUndefined } = require("../utils/helpers");
 
@@ -96,5 +98,7 @@ partySchema.statics = {
     ).exec();
   },
 };
+
+partySchema.plugin(mongoosePaginate);
 
 module.exports = mongoose.model("Party", partySchema);
