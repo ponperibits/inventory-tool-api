@@ -6,6 +6,7 @@ const partyRoutes = require("./party.route");
 const productRoutes = require("./product.route");
 const transactionRoutes = require("./transaction.route");
 const recordRoutes = require("./record.route");
+const expenseRoutes = require("./expense.route");
 
 const commonDetailRoutes = require("./commonDetailRoutes");
 
@@ -20,6 +21,7 @@ router.use("/party", partyRoutes);
 router.use("/product", productRoutes);
 router.use("/transaction", transactionRoutes);
 router.use("/record", recordRoutes);
+router.use("/expense", expenseRoutes);
 
 router.use("/commonDetail", commonDetailRoutes);
 
