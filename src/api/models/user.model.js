@@ -38,6 +38,13 @@ const userSchemaFields = {
     type: String,
     trim: true,
   },
+  currency: {
+    type: String,
+  },
+  profitPercent: {
+    type: Number,
+    default: 20,
+  },
   phone: {
     type: String,
   },
@@ -79,6 +86,8 @@ userSchema.method({
       "email",
       "phone",
       "orgName",
+      "currency",
+      "profitPercent",
       "createdAt",
       "updatedAt",
     ];
@@ -125,6 +134,16 @@ userSchema.statics = {
     } catch (error) {
       throw error;
     }
+  },
+
+  async updateUser(id, updates) {
+    updates = omitBy(updates, (each) => isNullorUndefined(each));
+    await this.updateOne(
+      {
+        _id: id,
+      },
+      updates
+    ).exec();
   },
 
   async findAndGenerateToken(options) {
