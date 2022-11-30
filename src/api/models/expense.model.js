@@ -14,6 +14,11 @@ const expenseSchemaFields = {
   transactionDate: {
     type: Number,
   },
+  type: {
+    type: String,
+    enum: ["Income", "Expense"],
+    required: true,
+  },
   amount: {
     type: Number,
     required: true,
