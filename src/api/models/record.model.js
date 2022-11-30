@@ -1,6 +1,8 @@
 /** * *
 Record
-* */ const mongoose = require("mongoose");
+* */
+const mongoose = require("mongoose");
+const mongoosePaginate = require("mongoose-paginate-v2");
 const _omitBy = require("lodash/omitBy");
 const { isNullorUndefined } = require("../utils/helpers");
 
@@ -97,5 +99,7 @@ recordSchema.statics = {
     ).exec();
   },
 };
+
+recordSchema.plugin(mongoosePaginate);
 
 module.exports = mongoose.model("Record", recordSchema);

@@ -3,6 +3,8 @@ Record
 * */
 const httpStatus = require("http-status");
 const Record = require("../models/record.model");
+const _omitBy = require("lodash/omitBy");
+const { isNullorUndefined } = require("../utils/helpers");
 
 exports.list = async (req, res, next) => {
   try {
@@ -11,6 +13,34 @@ exports.list = async (req, res, next) => {
       userId: req.user._id,
     });
     res.json(records);
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.paginate = async (req, res, next) => {
+  try {
+    const query = {
+      ...req.query,
+      userId: req.user._id,
+    };
+
+    const { page, perPage, ...rest } = _omitBy(query, (each) =>
+      isNullorUndefined(each)
+    );
+
+    let products = await Record.paginate(rest, {
+      page: page || 1,
+      limit: perPage || 30,
+      sort: { transactionDate: -1 },
+      populate: [
+        { path: "supplierId", select: "name" },
+        { path: "customerId", select: "name" },
+        { path: "productId", select: "name" },
+      ],
+    });
+
+    res.json(products);
   } catch (error) {
     next(error);
   }
