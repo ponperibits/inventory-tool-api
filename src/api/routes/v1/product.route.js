@@ -14,6 +14,8 @@ const {
 } = require("../../validations/product.validation");
 const router = express.Router();
 
+router.route("/paginate").get(authorize(LOGGED_USER), controller.paginate);
+
 router
   .route("/all") /** * @api {GET} v1/product/all List
   product

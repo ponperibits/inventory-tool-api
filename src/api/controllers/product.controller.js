@@ -3,6 +3,8 @@ Product
 * */
 const httpStatus = require("http-status");
 const Product = require("../models/product.model");
+const _omitBy = require("lodash/omitBy");
+const { isNullorUndefined } = require("../utils/helpers");
 
 exports.list = async (req, res, next) => {
   try {
@@ -10,6 +12,29 @@ exports.list = async (req, res, next) => {
       ...req.query,
       userId: req.user._id,
     });
+    res.json(products);
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.paginate = async (req, res, next) => {
+  try {
+    const query = {
+      ...req.query,
+      userId: req.user._id,
+    };
+
+    const { page, perPage, ...rest } = _omitBy(query, (each) =>
+      isNullorUndefined(each)
+    );
+
+    let products = await Product.paginate(rest, {
+      page: page || 1,
+      limit: perPage || 30,
+      sort: { createdAt: -1 },
+    });
+
     res.json(products);
   } catch (error) {
     next(error);

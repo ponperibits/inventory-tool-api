@@ -1,6 +1,8 @@
 /** * *
 Product
-* */ const mongoose = require("mongoose");
+* */
+const mongoose = require("mongoose");
+const mongoosePaginate = require("mongoose-paginate-v2");
 const _omitBy = require("lodash/omitBy");
 const { isNullorUndefined } = require("../utils/helpers");
 
@@ -98,5 +100,7 @@ productSchema.statics = {
     ).exec();
   },
 };
+
+productSchema.plugin(mongoosePaginate);
 
 module.exports = mongoose.model("Product", productSchema);
