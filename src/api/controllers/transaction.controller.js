@@ -22,12 +22,16 @@ exports.list = async (req, res, next) => {
       page: page || 1,
       limit: perPage || 30,
       sort: { transactionDate: -1 },
-      populate: {
-        path: "records",
-        populate: {
-          path: "productId supplierId customerId",
+      populate: [
+        { path: "supplierId", select: "name" },
+        { path: "customerId", select: "name" },
+        {
+          path: "records",
+          populate: {
+            path: "productId supplierId customerId",
+          },
         },
-      },
+      ],
     });
     res.json(transactions);
   } catch (error) {
