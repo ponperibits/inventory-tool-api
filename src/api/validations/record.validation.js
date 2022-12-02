@@ -19,6 +19,8 @@ module.exports = {
       perPage: Joi.number().min(1).max(100),
       date: Joi.alternatives([Joi.date(), Joi.string().valid("null")]),
       fields: Joi.string(),
+      startDate: Joi.alternatives([Joi.string().allow(""), Joi.number()]),
+      endDate: Joi.alternatives([Joi.string().allow(""), Joi.number()]),
       productId: Joi.string(),
       supplierId: Joi.string(),
       customerId: Joi.string(),

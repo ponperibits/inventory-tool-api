@@ -63,11 +63,23 @@ const allFields = Object.keys(recordSchemaFields).join(" ");
 recordSchema.method({});
 
 recordSchema.statics = {
-  async list({ page = 1, perPage = 100, date, fields = allFields, ...rest }) {
+  async list({
+    page = 1,
+    perPage = 100,
+    date,
+    fields = allFields,
+    startDate,
+    endDate,
+    ...rest
+  }) {
     const options = _omitBy(rest, (each) => isNullorUndefined(each));
 
     if (date && date != "null") {
       options["dateTime"] = { $gte: date };
+    }
+
+    if (startDate && startDate != "null" && endDate && endDate != "null") {
+      options["transactionDate"] = { $gte: startDate, $lte: endDate };
     }
 
     if (fields && fields != "null") {
@@ -78,9 +90,7 @@ recordSchema.statics = {
       .populate("supplierId", "name")
       .populate("customerId", "name")
       .populate("productId", "name")
-      .sort({ transactionDate: -1 })
-      .skip(perPage * (page - 1))
-      .limit(perPage)
+      .sort({ transactionDate: 1 })
       .exec();
   },
 
