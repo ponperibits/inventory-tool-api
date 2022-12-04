@@ -3,8 +3,11 @@ Product
 * */
 const httpStatus = require("http-status");
 const Product = require("../models/product.model");
+const Record = require("../models/record.model");
 const _omitBy = require("lodash/omitBy");
+const { isEmpty } = require("lodash");
 const { isNullorUndefined } = require("../utils/helpers");
+const APIError = require("../utils/APIError");
 
 exports.list = async (req, res, next) => {
   try {
@@ -79,6 +82,15 @@ exports.updateOne = async (req, res, next) => {
 exports.removeOne = async (req, res, next) => {
   try {
     const { productId: _id } = req.params;
+    const existingRecords = await Record.find({ productId: _id });
+
+    if (!isEmpty(existingRecords)) {
+      throw new APIError({
+        message: "Cannot delete product with existing records!",
+        status: httpStatus.BAD_REQUEST,
+      });
+    }
+
     await Product.deleteOne({ _id });
     res.status(httpStatus.NO_CONTENT);
     res.send();

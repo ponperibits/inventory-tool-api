@@ -1,7 +1,10 @@
 const httpStatus = require("http-status");
 const Party = require("../models/party.model");
+const Record = require("../models/record.model");
 const _omitBy = require("lodash/omitBy");
+const { isEmpty } = require("lodash");
 const { isNullorUndefined } = require("../utils/helpers");
+const APIError = require("../utils/APIError");
 
 exports.list = async (req, res, next) => {
   try {
@@ -76,6 +79,17 @@ exports.updateOne = async (req, res, next) => {
 exports.removeOne = async (req, res, next) => {
   try {
     const { partyId: _id } = req.params;
+    const existingRecords = await Record.find({
+      $or: [{ customerId: _id }, { supplierId: _id }],
+    });
+
+    if (!isEmpty(existingRecords)) {
+      throw new APIError({
+        message: "Cannot delete party with existing records!",
+        status: httpStatus.BAD_REQUEST,
+      });
+    }
+
     await Party.deleteOne({ _id });
     res.status(httpStatus.NO_CONTENT);
     res.send();
