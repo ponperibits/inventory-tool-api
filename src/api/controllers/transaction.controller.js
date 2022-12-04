@@ -7,6 +7,7 @@ const Record = require("../models/record.model");
 const Product = require("../models/product.model");
 const _omitBy = require("lodash/omitBy");
 const { isNullorUndefined } = require("../utils/helpers");
+const APIError = require("../utils/APIError");
 
 exports.list = async (req, res, next) => {
   try {
@@ -126,6 +127,14 @@ exports.updateOne = async (req, res, next) => {
 exports.removeOne = async (req, res, next) => {
   try {
     const { transactionId: _id } = req.params;
+
+    if (_id) {
+      throw new APIError({
+        message: "Not Implemented",
+        status: httpStatus.NOT_IMPLEMENTED,
+      });
+    }
+
     await Transaction.deleteOne({ _id });
     res.status(httpStatus.NO_CONTENT);
     res.send();
