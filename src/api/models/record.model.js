@@ -24,6 +24,9 @@ const recordSchemaFields = {
     type: Number,
     required: true,
   },
+  prodUnitsOpening: {
+    type: Number,
+  },
   prodUnitsBalance: {
     type: Number,
   },

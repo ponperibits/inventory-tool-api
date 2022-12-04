@@ -8,6 +8,7 @@ const Product = require("../models/product.model");
 const _omitBy = require("lodash/omitBy");
 const { isNullorUndefined } = require("../utils/helpers");
 const APIError = require("../utils/APIError");
+const { get, isEmpty } = require("lodash");
 
 exports.list = async (req, res, next) => {
   try {
@@ -51,9 +52,22 @@ exports.create = async (req, res, next) => {
 
     let recordsToSave = [];
     for (const record of records) {
+      const prodUnitsOpening = await findOpeningBalance(
+        get(record, "productId._id"),
+        savedTransaction.transactionDate
+      );
+
       const newRecord = new Record({
         ...record,
-        userId: req.user._id,
+        prodUnitsOpening,
+        ...(savedTransaction.supplierId && {
+          prodUnitsBalance: prodUnitsOpening + get(record, "noOfUnits"),
+          userId: req.user._id,
+        }),
+        ...(savedTransaction.customerId && {
+          prodUnitsBalance: prodUnitsOpening - get(record, "noOfUnits"),
+          userId: req.user._id,
+        }),
         transactionId: savedTransaction._id,
         transactionDate: savedTransaction.transactionDate,
         ...(savedTransaction.supplierId && {
@@ -67,6 +81,7 @@ exports.create = async (req, res, next) => {
     }
 
     await adjustProductQuantity(recordsToSave);
+    await adjustOtherRecords(recordsToSave);
     await Record.insertMany(recordsToSave);
 
     res.status(httpStatus.CREATED);
@@ -93,15 +108,31 @@ exports.updateOne = async (req, res, next) => {
     await Transaction.updateTransaction(transactionId, rest);
 
     const existingRecords = await Record.find({ transactionId });
+    const existingTransaction = await Transaction.fetch(transactionId);
     await adjustProductQuantity(existingRecords, -1);
+    await adjustOtherRecords(existingRecords, -1);
     await Record.deleteMany({ transactionId });
 
     const updatedTransaction = await Transaction.fetch(transactionId);
 
     let recordsToSave = [];
     for (const record of records) {
+      const prodUnitsOpening = await findOpeningBalance(
+        get(record, "productId._id"),
+        existingTransaction.transactionDate
+      );
+
       const newRecord = new Record({
         ...record,
+        prodUnitsOpening,
+        ...(updatedTransaction.supplierId && {
+          prodUnitsBalance: prodUnitsOpening + get(record, "noOfUnits"),
+          userId: req.user._id,
+        }),
+        ...(updatedTransaction.customerId && {
+          prodUnitsBalance: prodUnitsOpening - get(record, "noOfUnits"),
+          userId: req.user._id,
+        }),
         userId: req.user._id,
         transactionId,
         transactionDate: updatedTransaction.transactionDate,
@@ -114,7 +145,9 @@ exports.updateOne = async (req, res, next) => {
       });
       recordsToSave.push(newRecord);
     }
+
     await adjustProductQuantity(recordsToSave);
+    await adjustOtherRecords(recordsToSave);
     await Record.insertMany(recordsToSave);
 
     res.status(httpStatus.NO_CONTENT);
@@ -151,6 +184,41 @@ const adjustProductQuantity = async (records, multiplier = 1) => {
       {
         $inc: {
           noOfUnits: supplierId
+            ? multiplier * noOfUnits
+            : multiplier * -noOfUnits,
+        },
+      }
+    );
+  }
+};
+
+const findOpeningBalance = async (productId, transactionDate) => {
+  const latestRecord = await Record.findOne({
+    productId,
+    transactionDate: { $lte: transactionDate },
+  });
+
+  if (isEmpty(latestRecord)) {
+    return 0;
+  }
+
+  return get(latestRecord, "prodUnitsBalance");
+};
+
+const adjustOtherRecords = async (records, multiplier = 1) => {
+  for (const record of records) {
+    const { productId, noOfUnits, transactionDate, supplierId } = record;
+    await Record.updateMany(
+      {
+        productId,
+        transactionDate: { $gt: transactionDate },
+      },
+      {
+        $inc: {
+          prodUnitsOpening: supplierId
+            ? multiplier * noOfUnits
+            : multiplier * -noOfUnits,
+          prodUnitsBalance: supplierId
             ? multiplier * noOfUnits
             : multiplier * -noOfUnits,
         },
