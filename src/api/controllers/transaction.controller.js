@@ -160,13 +160,11 @@ exports.updateOne = async (req, res, next) => {
 exports.removeOne = async (req, res, next) => {
   try {
     const { transactionId: _id } = req.params;
+    const existingRecords = await Record.find({ transactionId: _id });
+    await adjustProductQuantity(existingRecords, -1);
+    await adjustOtherRecords(existingRecords, -1);
 
-    if (_id) {
-      throw new APIError({
-        message: "Not Implemented",
-        status: httpStatus.NOT_IMPLEMENTED,
-      });
-    }
+    await Record.deleteMany({ transactionId: _id });
 
     await Transaction.deleteOne({ _id });
     res.status(httpStatus.NO_CONTENT);
