@@ -14,6 +14,9 @@ const productSchemaFields = {
   description: {
     type: String,
   },
+  sku: {
+    type: String,
+  },
   price: {
     type: Number,
     required: true,
@@ -71,6 +74,7 @@ productSchema.statics = {
         $or: [
           { name: { $regex: searchText, $options: "i" } },
           { description: { $regex: searchText, $options: "i" } },
+          { sku: { $regex: searchText, $options: "i" } },
         ],
       };
     }

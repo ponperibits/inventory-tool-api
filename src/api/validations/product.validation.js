@@ -12,6 +12,7 @@ module.exports = {
     body: Joi.object({
       name: Joi.string().required(),
       description: Joi.string().allow(""),
+      sku: Joi.string().required(),
       price: Joi.number().required(),
       sellingPrice: Joi.number().required(),
       minStockWarning: Joi.number().allow(0),
@@ -44,6 +45,7 @@ module.exports = {
     body: Joi.object({
       name: Joi.string().allow(""),
       description: Joi.string().allow(""),
+      sku: Joi.string().allow(""),
       price: Joi.number().allow(""),
       sellingPrice: Joi.number().allow(""),
       noOfUnits: Joi.number().allow(0),
