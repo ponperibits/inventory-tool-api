@@ -11,6 +11,10 @@ const productSchemaFields = {
     type: String,
     required: true,
   },
+  shortLabel:{
+    type: String,
+    required: true,
+  },
   description: {
     type: String,
   },

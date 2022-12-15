@@ -11,6 +11,7 @@ module.exports = {
   createProduct: {
     body: Joi.object({
       name: Joi.string().required(),
+      shortLabel: Joi.string().required(),
       description: Joi.string().allow(""),
       sku: Joi.string().required(),
       price: Joi.number().required(),
@@ -44,6 +45,7 @@ module.exports = {
     }),
     body: Joi.object({
       name: Joi.string().allow(""),
+      shortLabel: Joi.string().allow(""),
       description: Joi.string().allow(""),
       sku: Joi.string().allow(""),
       price: Joi.number().allow(""),
